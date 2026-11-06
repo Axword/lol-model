@@ -119,6 +119,18 @@ def cmd_predict(a):
         print(sig if sig else "brak value (edge/EV ponizej progu)")
 
 
+def cmd_odds_probe(a):
+    """Pobiera 1 liste fixtures (+ opcjonalnie historical-odds jednego) i pokazuje strukture."""
+    from .odds import oddspapi as OP
+    fx = OP.fixtures(a.date_from, a.date_to)["data"]
+    items = fx if isinstance(fx, list) else fx.get("data", fx)
+    print(f"fixtures: {len(items) if hasattr(items, '__len__') else '?'}")
+    print(json.dumps(items[:2] if isinstance(items, list) else items, indent=1, ensure_ascii=False)[:2500])
+    if a.fixture:
+        h = OP.historical(a.fixture)["data"]
+        print(json.dumps(h, indent=1, ensure_ascii=False)[:3000])
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="lolbet")
     ap.add_argument("--db", help="sciezka do bazy lol_spy")
@@ -131,6 +143,9 @@ def main(argv=None):
     p = sub.add_parser("predict"); p.set_defaults(fn=cmd_predict)
     p.add_argument("state", help="plik JSON ze stanem gry"); p.add_argument("--trust", type=float, default=0.5)
     p.add_argument("--odds-blue", type=float); p.add_argument("--odds-red", type=float)
+    o = sub.add_parser("odds-probe"); o.set_defaults(fn=cmd_odds_probe)
+    o.add_argument("--from", dest="date_from", required=True); o.add_argument("--to", dest="date_to", required=True)
+    o.add_argument("--fixture", help="id fixture do pobrania historical-odds")
     a = ap.parse_args(argv)
     a.fn(a)
 

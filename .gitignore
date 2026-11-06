@@ -6,3 +6,4 @@ data/
 models/
 *.part
 *.pkl
+.env
