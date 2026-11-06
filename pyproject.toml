@@ -1,0 +1,14 @@
+[project]
+name = "lolbet"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["numpy", "pandas", "scikit-learn", "scipy"]
+
+[project.scripts]
+lolbet = "lolbet.cli:main"
+
+[tool.setuptools]
+packages = ["lolbet"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
